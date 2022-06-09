@@ -2,14 +2,6 @@
 import jwt from "jsonwebtoken";
 import { tokenErrors } from "../utils/tokenManager.js";
 
-// export const validationExpress = (req, res, next) => {
-//     const errors = validationResult(req);
-//     if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//     }
-//     next();
-// };
-
 export const validateToken = (req, res, next) => {
     try {
         let token = req.headers?.authorization;
