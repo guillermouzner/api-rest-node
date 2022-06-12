@@ -1,4 +1,5 @@
-import { body, validationResult } from "express-validator";
+import { body, validationResult, param } from "express-validator";
+import axios from "axios";
 
 export const validationExpress = (req, res, next) => {
     const errors = validationResult(req);
@@ -7,7 +8,6 @@ export const validationExpress = (req, res, next) => {
     }
     next();
 };
-
 export const bodyRegisterValidator = [
     body("email", "formato de email incorrecto")
         .trim()
@@ -24,7 +24,6 @@ export const bodyRegisterValidator = [
     }),
     validationExpress,
 ];
-
 export const bodyLoginValidator = [
     body("email", "formato de email incorrecto")
         .trim()
@@ -33,5 +32,29 @@ export const bodyLoginValidator = [
     body("password", "La contraseña debe tener al menos 6 caracteres")
         .trim()
         .isLength({ min: 6 }),
+    validationExpress,
+];
+export const bodyLinkValidator = [
+    body("longLink", "formato link incorrecto")
+        .trim()
+        .notEmpty()
+        .custom(async (value) => {
+            try {
+                if (!value.startsWith("https://")) {
+                    value = "https://" + value;
+                }
+
+                await axios.get(value);
+
+                return value;
+            } catch (error) {
+                console.log(error.message);
+                throw new Error(`404 not found`);
+            }
+        }),
+    validationExpress,
+];
+export const paramsLinkValidator = [
+    param("id", "formato no valido").trim().notEmpty().escape(),
     validationExpress,
 ];

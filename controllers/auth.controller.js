@@ -1,21 +1,23 @@
-import { User } from "../models/user.js";
-import { generateRefreshToken, generateToken } from "../utils/tokenManager.js";
+import { User } from "../models/User.js";
+import {
+    generateRefreshToken,
+    generateToken,
+} from "../middlewares/auth/generateTokenManager.js";
 
 export const register = async (req, res) => {
     const { email, password } = req.body;
     try {
         const user = new User({ email, password });
+
         await user.save();
 
         // jwt token
         const { token, expiresIn } = generateToken(user.id);
+        generateRefreshToken(user.id, res);
 
-        return res.json({ token, expiresIn });
-    } catch (error) {
-        // console.log(error);
-        if (error.code === 11000)
-            return res.status(400).json({ error: "Ya existe el usuario" });
-    }
+        return res.json({ redirec: "pagina inicio", token, expiresIn });
+    } catch (error) {}
+    return res.status(500).json({ error: "error de servidor" });
 };
 
 export const login = async (req, res) => {
@@ -27,17 +29,15 @@ export const login = async (req, res) => {
 
         const userPassword = await user.comparePassword(password);
         if (!userPassword)
-            return res.status(403).json({ error: "Contraseña incorrecta" });
+            return res.status(403).json({ error: "Constraseña incorrecta" });
 
         // jwt token
         const { token, expiresIn } = generateToken(user.id);
-
         generateRefreshToken(user.id, res);
 
         return res.json({ token, expiresIn, uid: user.id });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error: "Error de servidor" });
     }
 };
 
@@ -46,7 +46,7 @@ export const refreshToken = (req, res) => {
         const { token, expiresIn } = generateToken(req.uid);
         return res.json({ token, expiresIn });
     } catch (error) {
-        return res.status(500).json({ error: "error de server" });
+        return res.status(500).json({ error: "error de servidor" });
     }
 };
 
@@ -55,6 +55,7 @@ export const infoUser = async (req, res) => {
         const user = await User.findById(req.uid).lean();
         return res.json({ email: user.email, id: user._id });
     } catch (error) {
+        console.log(error.message);
         return res.status(500).json({ error: "error de servidor" });
     }
 };
