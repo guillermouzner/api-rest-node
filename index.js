@@ -12,7 +12,7 @@ import swaggerUI from "swagger-ui-express";
 
 const app = express();
 
-const whiteList = [process.env.ORIGIN];
+const whiteList = [process.env.ORIGIN1];
 
 app.use(
     cors({
