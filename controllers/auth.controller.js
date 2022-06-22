@@ -16,8 +16,9 @@ export const register = async (req, res) => {
         generateRefreshToken(user.id, res);
 
         return res.json({ redirec: "/login", token, expiresIn });
-    } catch (error) {}
-    return res.status(500).json({ error: "error de servidor" });
+    } catch (error) {
+        return res.status(500).json({ error: "error de servidor" });
+    }
 };
 
 export const login = async (req, res) => {
