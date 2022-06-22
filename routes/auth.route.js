@@ -19,14 +19,19 @@ import {
 
 const router = Router();
 
+// Registro de usuario
 router.post("/register", bodyRegisterValidator, register);
 
+// login de usuario
 router.post("/login", bodyLoginValidator, login);
 
+// refresh token
 router.get("/refresh", requireRefreshToken, refreshToken);
 
+// ruta protegida
 router.get("/protected", validateToken, infoUser);
 
+// logout de usuario
 router.get("/logout", logout);
 
 export default router;

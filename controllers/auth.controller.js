@@ -15,7 +15,7 @@ export const register = async (req, res) => {
         const { token, expiresIn } = generateToken(user.id);
         generateRefreshToken(user.id, res);
 
-        return res.json({ redirec: "pagina inicio", token, expiresIn });
+        return res.json({ redirec: "/login", token, expiresIn });
     } catch (error) {}
     return res.status(500).json({ error: "error de servidor" });
 };
@@ -35,7 +35,7 @@ export const login = async (req, res) => {
         const { token, expiresIn } = generateToken(user.id);
         generateRefreshToken(user.id, res);
 
-        return res.json({ token, expiresIn, uid: user.id });
+        return res.json({ redirec: "/", token, expiresIn });
     } catch (error) {
         console.log(error);
     }
@@ -44,7 +44,7 @@ export const login = async (req, res) => {
 export const refreshToken = (req, res) => {
     try {
         const { token, expiresIn } = generateToken(req.uid);
-        return res.json({ token, expiresIn });
+        return res.json({ refreshtoken: "existe token", token, expiresIn });
     } catch (error) {
         return res.status(500).json({ error: "error de servidor" });
     }

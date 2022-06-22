@@ -46,9 +46,15 @@ export const createLink = async (req, res) => {
             uid: req.uid,
         });
 
-        const newLink = await link.save();
+        await link.save();
 
-        return res.status(201).json({ newLink });
+        return res.status(201).json({
+            newLink: {
+                link: link.longLink,
+                nanoLink: link.nanoLink,
+                id: link._id,
+            },
+        });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ error: "error de servidor" });
@@ -90,7 +96,13 @@ export const updateLink = async (req, res) => {
         //Update
         link.longLink = longLink;
         await link.save();
-        return res.json({ link });
+        return res.json({
+            link: {
+                id: link._id,
+                longLink: link.longLink,
+                nanoLink: link.nanoLink,
+            },
+        });
     } catch (error) {
         console.log(error.message);
         return res.status(500).json({ error: "error de servidor" });
